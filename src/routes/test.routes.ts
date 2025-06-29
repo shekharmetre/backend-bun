@@ -1,4 +1,4 @@
-import { db } from '@/config/database';
+import { db, prisma } from '@/config/database';
 import { ApiResponse } from '@/utils/apiResponse'
 import { safeQuery } from '@/utils/safequery';
 import { Elysia, t } from 'elysia'
@@ -8,17 +8,7 @@ export const testApis = new Elysia({ prefix: '/test' })
     .get("/first", async () => {
         try {
 
-            const user = await safeQuery(() =>
-                db.user.findUnique({
-                    where: { email:"metreshekhar249@gmail.com" },
-                    select: {
-                        id: true,
-                        firstName: true,
-                        email: true,
-                        phone: true,
-                    },
-                })
-            );
+           const user = await prisma.user.findUnique({where:{email:"metreshekhar249@gmail.com"}})
             console.log(user)
             return ApiResponse.success(user, 200)
         } catch (error) {
