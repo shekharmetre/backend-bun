@@ -1,0 +1,101 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+
+model User {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  password    String
+  firstName   String
+  lastName    String
+  phone       String
+  address     String?
+  useLocation Boolean?
+  authId      String?  @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  orders      Order[]
+}
+
+model Order {
+  id          String     @id @default(uuid())
+  txnId       String     @unique
+  orderKey    String     // Non-nullable for proper unique constraint
+  userId      String
+  amount      Float
+  status      OrderStatus @default(PENDING)
+  productInfo Json[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  user        User       @relation(fields: [userId], references: [id])
+
+  @@unique([orderKey, userId], name: "order_user_composite")
+  @@index([orderKey])
+  @@index([userId])
+}
+
+// Enum for order status
+enum OrderStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+enum Category {
+  chargers
+  cables
+  audio
+  protection
+  accessories
+  adapters
+  gaming
+  mobile
+  sim
+  powerbanks
+}
+
+model Product {
+  id            String   @id @default(uuid())
+  name          String
+  description   String
+  price         Float
+  discountPrice Float?
+  images        String[] // Prisma supports array types on Postgres
+  category      Category
+  subcategory   String
+  compatibility String[] @default([])
+  features      String[] @default([])
+  rating        Float
+  reviews       Int
+  inStock       Boolean
+  isNew         Boolean? @default(false)
+  isFeatured    Boolean? @default(false)
+  isLatest      Boolean? @default(false)
+}
+
+model CategoryInfo {
+  id          String   @id @default(uuid())
+  name        String
+  slug        Category @unique
+  description String
+  image       String
+}
+
+// prisma/schema.prisma
+model TransactionCounter {
+  id        Int    @id @default(1)
+  lastValue Int
+}
