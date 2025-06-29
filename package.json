@@ -3,7 +3,12 @@
   "version": "1.0.50",
   "scripts": {
     "dev": "bun run --watch src/index.ts",
-    "start": "bun run src/index.ts"
+    "start": "bun run src/index.ts",
+    "generate": "prisma generate",
+    "migrate:deploy": "prisma migrate deploy",
+    "migrate:dev": "prisma migrate dev",
+    "db:push": "prisma db push",
+    "db:seed": "bun run prisma/seed.ts"
   },
   "dependencies": {
     "@elysiajs/cookie": "^0.8.0",
