@@ -1,4 +1,6 @@
-import { db } from "../config/database"
+import { PrismaClient } from '@prisma/client'
+
+const db = new PrismaClient()
 
 interface SafeQueryOptions {
   retries?: number
