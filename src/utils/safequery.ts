@@ -15,10 +15,17 @@ export async function safeQuery<T>(
   const { retries = 3, timeout = 5000, tag = 'DB' } = options
   let lastError: Error | null = null
 
+  try {
+    await db.$connect() // ✅ This ensures connection is initialized
+  } catch (err) {
+    console.error("❌ Initial DB connection failed:", err)
+    throw err
+  }
+
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
       await Promise.race([
-        db.$queryRaw`SELECT 1`,
+        db.$queryRaw`SELECT 1`, // ✅ now should work
         new Promise((_, reject) =>
           setTimeout(() => reject(new Error('DB health check timeout')), 1000)
         ),
