@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client'
-
 const db = new PrismaClient()
 
 interface SafeQueryOptions {
@@ -16,7 +15,7 @@ export async function safeQuery<T>(
   let lastError: Error | null = null
 
   try {
-    await db.$connect() // ✅ This ensures connection is initialized
+    await db.$connect()
   } catch (err) {
     console.error("❌ Initial DB connection failed:", err)
     throw err
@@ -24,14 +23,13 @@ export async function safeQuery<T>(
 
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
-      await Promise.race([
-        db.$queryRaw`SELECT 1`, // ✅ now should work
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('DB health check timeout')), 1000)
-        ),
-      ])
+      const controller = new AbortController()
+      const timer = setTimeout(() => controller.abort(), timeout)
 
-      return await queryFn()
+      const result = await queryFn() // ✅ Only real query here
+
+      clearTimeout(timer)
+      return result
     } catch (error: any) {
       lastError = error
       const delay = Math.min(timeout, Math.pow(2, attempt) * 100 + Math.random() * 300)
