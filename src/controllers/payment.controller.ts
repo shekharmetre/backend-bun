@@ -81,7 +81,7 @@ export class PaymentController {
 
 
     // Step 4: Prepare PayU hash
-    const hashString = `${process.env.PAY_U_PUBLIC_MERCHANT_KEY}|${order.txnId}|${totalPrice}|${JSON.stringify(items)}|${user.firstName}|${user.email}|||||||||||${process.env.PAY_U_PUBLIC_MERCHANT_KEY}`;
+    const hashString = `${process.env.PAY_U_PUBLIC_MERCHANT_KEY}|${order.txnId}|${totalPrice}|${JSON.stringify(items)}|${user.firstName}|${user.email}|||||||||||${process.env.NEXT_PUBLIC_SALT}`;
     const hash = crypto.createHash('sha512').update(hashString).digest('hex');
     set.status = 200;
     return ApiResponse.success({
@@ -97,8 +97,8 @@ export class PaymentController {
         firstname: user.firstName,
         email: user.email,
         phone: user.phone || '9999999999',
-        surl: `${process.env.PORT}/user/payment/success?token=${token}`,
-        furl: `${process.env.PORT}/payment/fail`,
+        surl: `${process.env.NEXT_PUBLIC_BASE_URL}/user/payment/success?token=${token}`,
+        furl: `${process.env.NEXT_PUBLIC_BASE_URL}/payment/fail`,
         hash,
       },
     });
@@ -141,7 +141,7 @@ export class PaymentController {
       return new Response(null, {
         status: 302,
         headers: {
-          Location: `${FRONTEND_URL}/payment/success?token=${token}`,
+          Location: `${process.env.FRONTEND_URL}/payment/success?token=${token}`,
         },
       });
 

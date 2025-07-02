@@ -13,7 +13,8 @@ const app = new Elysia()
   .use(cors({
     origin: [
       'https://www.bhagyawantimobile.shop',
-      'http://localhost:8080'
+      'http://localhost:8080',
+      'https://5445-2401-4900-93a5-69e5-71b2-141a-6639-447f.ngrok-free.app'
     ],
     credentials: true
   }))

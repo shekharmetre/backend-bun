@@ -15,9 +15,6 @@ export class UserController {
       useLocation,
     } = body;
 
-
-
-
     if (!email || !password || !firstName) {
       set.status = 400;
       return ApiResponse.error(

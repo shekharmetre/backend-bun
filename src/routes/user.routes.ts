@@ -16,7 +16,8 @@ export const userRoutes = new Elysia({ prefix: '/user' })
   .use(cors({
     origin: [
       'https://www.bhagyawantimobile.shop',  // ✅ correct production frontend
-      'http://localhost:3000'                // ✅ local dev frontend
+      'http://localhost:3000',
+      'https://5445-2401-4900-93a5-69e5-71b2-141a-6639-447f.ngrok-free.app'
     ],
     credentials: true
   }))
@@ -83,7 +84,7 @@ export const userRoutes = new Elysia({ prefix: '/user' })
       })
       .post('/auth/payment', async ({ body, set }) => {
         return await paymentControler.initPayment(body, set)
-      }, {
+      },{
         beforeHandle: ssoMiddleware
       })
       .post('/auth/dummy/payment', async ({ body, set }) => {
